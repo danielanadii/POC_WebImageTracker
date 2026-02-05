@@ -74,6 +74,12 @@
     const mindarThree = new MindARThree({
       container,
       imageTargetSrc: "./targets.mind"
+      maxTrack: 1,
+      videoSettings: {
+        facingMode: "environment",
+        width: { ideal: 1920 },
+        height: { ideal: 1080 }
+      }
     });
 
     const { renderer, scene, camera } = mindarThree;
@@ -86,8 +92,9 @@
     const loader = new GLTFLoader();
     loader.load("./house.glb", (gltf) => {
       const house = gltf.scene;
-      house.scale.set(0.15, 0.15, 0.15);
+      house.scale.set(0.1, 0.1 0.1);
       house.rotation.x = Math.PI / 2;
+      house.position.y = -0.1;
       anchor.group.add(house);
     });
 
