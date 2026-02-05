@@ -1,65 +1,57 @@
 <!DOCTYPE html>
 <html lang="en">
-  <head>
-    <meta charset="utf-8" />
-    <meta
-      name="viewport"
-      content="width=device-width, initial-scale=1.0, user-scalable=no"
-    />
-    <title>MindAR House CUK</title>
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta name="apple-mobile-web-app-capable" content="yes">
 
-    <!-- MindAR + Three.js -->
-    <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/loaders/GLTFLoader.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/build/three.min.js"></script>
+  <title>MindAR House COBA</title>
 
-    <style>
-      html, body {
-        margin: 0;
-        padding: 0;
-        overflow: hidden;
-        width: 100%;
-        height: 100%;
-        background: black;
-      }
-      canvas {
-        width: 100%;
-        height: 100%;
-      }
-    </style>
-  </head>
+  <script src="https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.152.2/examples/js/loaders/GLTFLoader.js"></script>
 
-  <body>
-    <script>
-      const start = async () => {
-        const mindarThree = new window.MINDAR.IMAGE.MindARThree({
-          container: document.body,
-          imageTargetSrc: './targets.mind',
-        });
+  <style>
+    html, body {
+      margin: 0;
+      padding: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      background: black;
+    }
+  </style>
+</head>
 
-        const { renderer, scene, camera } = mindarThree;
+<body>
+<script>
+  const start = async () => {
+    const mindarThree = new window.MINDAR.IMAGE.MindARThree({
+      container: document.body,
+      imageTargetSrc: './targets.mind',
+    });
 
-        const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
-        scene.add(light);
+    const { renderer, scene, camera } = mindarThree;
 
-        const anchor = mindarThree.addAnchor(0);
+    const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
+    scene.add(light);
 
-        const loader = new THREE.GLTFLoader();
-        loader.load('./house.glb', (gltf) => {
-          const house = gltf.scene;
-          house.scale.set(0.2, 0.2, 0.2);
-          house.position.set(0, 0, 0);
-          anchor.group.add(house);
-        });
+    const anchor = mindarThree.addAnchor(0);
 
-        await mindarThree.start();
+    const loader = new THREE.GLTFLoader();
+    loader.load('./house.glb', (gltf) => {
+      const house = gltf.scene;
+      house.scale.set(0.2, 0.2, 0.2);
+      anchor.group.add(house);
+    });
 
-        renderer.setAnimationLoop(() => {
-          renderer.render(scene, camera);
-        });
-      };
+    await mindarThree.start();
 
-      start();
-    </script>
-  </body>
+    renderer.setAnimationLoop(() => {
+      renderer.render(scene, camera);
+    });
+  };
+
+  start();
+</script>
+</body>
 </html>
