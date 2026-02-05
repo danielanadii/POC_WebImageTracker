@@ -67,10 +67,10 @@
     import * as THREE from "three";
     import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
     import { MindARThree } from "mindar-image-three";
-
+  
     const startButton = document.getElementById("start-btn");
     const container = document.getElementById("ar-container");
-
+  
     const mindarThree = new MindARThree({
       container,
       imageTargetSrc: "./targets.mind",
@@ -80,28 +80,30 @@
         height: { ideal: 1080 }
       }
     });
-
+  
     const { renderer, scene, camera } = mindarThree;
-
+  
     const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
     scene.add(light);
-
+  
     const anchor = mindarThree.addAnchor(0);
-
+  
     const loader = new GLTFLoader();
     loader.load("./house.glb", (gltf) => {
       const house = gltf.scene;
-      house.scale.set(0.1, 0.1, 0.1);
+      house.scale.set(0.05, 0.05, 0.05);
       house.rotation.x = Math.PI / 2;
-      house.position.y = -0.1;
+      house.position.y = -0.5;
       anchor.group.add(house);
     });
-
+  
     startButton.addEventListener("click", async () => {
       startButton.style.display = "none";
-
       await mindarThree.start();
 
+      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setSize(window.innerWidth, window.innerHeight);
+  
       renderer.setAnimationLoop(() => {
         renderer.render(scene, camera);
       });
