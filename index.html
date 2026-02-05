@@ -6,11 +6,12 @@
     name="viewport"
     content="width=device-width, initial-scale=1.0, user-scalable=no"
   />
-  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-  <title>Image Tracking POC</title>
+  <title>Image Tracking ASS</title>
 
-  <!-- Import map: REQUIRED by MindAR (official way) -->
+  <!-- Import map (official MindAR setup) -->
   <script type="importmap">
   {
     "imports": {
@@ -29,49 +30,76 @@
       height: 100%;
       overflow: hidden;
       background: black;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+    }
+
+    #ar-container {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      overflow: hidden;
+      background: black;
+    }
+
+    #start-btn {
+      position: fixed;
+      z-index: 10;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      padding: 16px 28px;
+      font-size: 18px;
+      border-radius: 10px;
+      border: none;
+      background: #ffffff;
+      color: #000000;
+      cursor: pointer;
     }
   </style>
 </head>
 
 <body>
-<script type="module">
-  import * as THREE from "three";
-  import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-  import { MindARThree } from "mindar-image-three";
+  <button id="start-btn">Start AR</button>
+  <div id="ar-container"></div>
 
-  const start = async () => {
+  <script type="module">
+    import * as THREE from "three";
+    import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+    import { MindARThree } from "mindar-image-three";
+
+    const startButton = document.getElementById("start-btn");
+    const container = document.getElementById("ar-container");
+
     const mindarThree = new MindARThree({
-      container: document.body,
+      container,
       imageTargetSrc: "./targets.mind"
     });
 
     const { renderer, scene, camera } = mindarThree;
 
-    // Light
     const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
     scene.add(light);
 
-    // Anchor for first image target
     const anchor = mindarThree.addAnchor(0);
 
-    // Load 3D model
     const loader = new GLTFLoader();
     loader.load("./house.glb", (gltf) => {
       const house = gltf.scene;
-      house.scale.set(0.2, 0.2, 0.2);
-      house.rotation.x = Math.PI / 2; // optional, depends on model
+      house.scale.set(0.15, 0.15, 0.15);
+      house.rotation.x = Math.PI / 2;
       anchor.group.add(house);
     });
 
-    // Start AR
-    await mindarThree.start();
+    startButton.addEventListener("click", async () => {
+      startButton.style.display = "none";
 
-    renderer.setAnimationLoop(() => {
-      renderer.render(scene, camera);
+      await mindarThree.start();
+
+      renderer.setAnimationLoop(() => {
+        renderer.render(scene, camera);
+      });
     });
-  };
-
-  start();
-</script>
+  </script>
 </body>
 </html>
