@@ -2,17 +2,21 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+  <meta
+    name="viewport"
+    content="width=device-width, initial-scale=1.0, user-scalable=no"
+  />
   <meta name="apple-mobile-web-app-capable" content="yes">
 
-  <title>MindAR House DOCS</title>
+  <title>Image Tracking POC</title>
 
+  <!-- Import map: REQUIRED by MindAR (official way) -->
   <script type="importmap">
   {
     "imports": {
       "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
       "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
-      "mindar-image-three":"https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js"
+      "mindar-image-three": "https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js"
     }
   }
   </script>
@@ -30,27 +34,36 @@
 </head>
 
 <body>
-<script>
+<script type="module">
+  import * as THREE from "three";
+  import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
+  import { MindARThree } from "mindar-image-three";
+
   const start = async () => {
-    const mindarThree = new window.MINDAR.IMAGE.MindARThree({
+    const mindarThree = new MindARThree({
       container: document.body,
-      imageTargetSrc: './targets.mind',
+      imageTargetSrc: "./targets.mind"
     });
 
     const { renderer, scene, camera } = mindarThree;
 
+    // Light
     const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
     scene.add(light);
 
+    // Anchor for first image target
     const anchor = mindarThree.addAnchor(0);
 
-    const loader = new THREE.GLTFLoader();
-    loader.load('./house.glb', (gltf) => {
+    // Load 3D model
+    const loader = new GLTFLoader();
+    loader.load("./house.glb", (gltf) => {
       const house = gltf.scene;
       house.scale.set(0.2, 0.2, 0.2);
+      house.rotation.x = Math.PI / 2; // optional, depends on model
       anchor.group.add(house);
     });
 
+    // Start AR
     await mindarThree.start();
 
     renderer.setAnimationLoop(() => {
