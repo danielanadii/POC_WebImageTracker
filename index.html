@@ -9,7 +9,7 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-  <title>Image Tracking ASS</title>
+  <title>Image Tracking POC</title>
 
   <!-- Import map (official MindAR setup) -->
   <script type="importmap">
@@ -60,7 +60,7 @@
 </head>
 
 <body>
-  <button id="start-btn">Start AR</button>
+  <button id="start-btn">Start The AR</button>
   <div id="ar-container"></div>
 
   <script type="module">
@@ -74,7 +74,6 @@
     const mindarThree = new MindARThree({
       container,
       imageTargetSrc: "./targets.mind"
-      maxTrack: 1,
       videoSettings: {
         facingMode: "environment",
         width: { ideal: 1920 },
