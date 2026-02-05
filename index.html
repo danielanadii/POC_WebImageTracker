@@ -11,7 +11,7 @@
 
   <title>Image Tracking POC</title>
 
-  <!-- Import map (official MindAR setup) -->
+  <!-- Import map -->
   <script type="importmap">
   {
     "imports": {
@@ -67,10 +67,10 @@
     import * as THREE from "three";
     import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
     import { MindARThree } from "mindar-image-three";
-  
+
     const startButton = document.getElementById("start-btn");
     const container = document.getElementById("ar-container");
-  
+
     const mindarThree = new MindARThree({
       container,
       imageTargetSrc: "./targets.mind",
@@ -80,32 +80,43 @@
         height: { ideal: 1080, max: 1080 }
       }
     });
-  
+
     const { renderer, scene, camera } = mindarThree;
-  
-    const light = new THREE.HemisphereLight(0xffffff, 0xbbbbff, 1);
-    scene.add(light);
-  
+
+    // --- Color management (IMPORTANT)
+    renderer.outputColorSpace = THREE.SRGBColorSpace;
+    renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    renderer.toneMappingExposure = 1.1;
+
+    // --- Natural lighting setup
+    const sun = new THREE.DirectionalLight(0xffffff, 1.2);
+    sun.position.set(3, 6, 4);
+
+    const ambient = new THREE.AmbientLight(0xffffff, 0.7);
+
+    scene.add(sun, ambient);
+
     const anchor = mindarThree.addAnchor(0);
-  
+
     const loader = new GLTFLoader();
     loader.load("./house.glb", (gltf) => {
       const house = gltf.scene;
+
       house.scale.set(0.05, 0.05, 0.05);
       house.rotation.x = Math.PI / 2;
-      house.position.x = -0.3;
-      house.position.y = -0.35;
-      house.position.z = 0.5
+      house.position.set(-0.3, -0.35, 0.15);
+
       anchor.group.add(house);
     });
-  
+
     startButton.addEventListener("click", async () => {
       startButton.style.display = "none";
+
       await mindarThree.start();
 
-      renderer.setPixelRatio(window.devicePixelRatio);
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.setSize(window.innerWidth, window.innerHeight);
-  
+
       renderer.setAnimationLoop(() => {
         renderer.render(scene, camera);
       });
