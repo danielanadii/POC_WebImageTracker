@@ -67,105 +67,80 @@
     import * as THREE from "three";
     import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
     import { MindARThree } from "mindar-image-three";
-
+  
     const startButton = document.getElementById("start-btn");
     const container = document.getElementById("ar-container");
-
+  
     const mindarThree = new MindARThree({
       container,
       imageTargetSrc: "./targets.mind",
       videoSettings: {
         facingMode: "environment",
-        width: { ideal: 1920, max: 1920 },
-        height: { ideal: 1080, max: 1080 }
+        width: { ideal: 1920 },
+        height: { ideal: 1080 }
       }
     });
-
+  
     const { renderer, scene, camera } = mindarThree;
-
-    // ---- Color & lighting (unchanged)
+  
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.35;
-
-    const sun = new THREE.DirectionalLight(0xffffff, 1.8);
-    sun.position.set(5, 10, 5);
-
-    const fill = new THREE.DirectionalLight(0xffffff, 0.9);
-    fill.position.set(-5, 5, 2);
-
-    const ambient = new THREE.AmbientLight(0xffffff, 0.9);
-    scene.add(sun, fill, ambient);
-
-    // ---- Anchor
+    renderer.toneMappingExposure = 1.1;
+  
+    const sun = new THREE.DirectionalLight(0xffffff, 1.2);
+    sun.position.set(3, 6, 4);
+    const ambient = new THREE.AmbientLight(0xffffff, 0.7);
+    scene.add(sun, ambient);
+  
     const anchor = mindarThree.addAnchor(0);
-
-    // ---- Smoothing state
+  
+    // ---- SMOOTHING SETUP (THIS IS THE KEY PART)
     const smoothGroup = new THREE.Group();
-    scene.add(smoothGroup);
-
-    const smoothPose = {
-      position: new THREE.Vector3(),
-      quaternion: new THREE.Quaternion(),
-      initialized: false,
-    };
-
-    // ---- Load model
+    anchor.group.add(smoothGroup);
+  
+    const targetPosition = new THREE.Vector3();
+    const targetQuaternion = new THREE.Quaternion();
+    const targetScale = new THREE.Vector3(0.18, 0.27, 0.18);
+  
+    smoothGroup.scale.copy(targetScale);
+  
     const loader = new GLTFLoader();
     loader.load("./house.glb", (gltf) => {
       const house = gltf.scene;
-
-      house.scale.set(0.18, 0.22, 0.18);
+  
       house.rotation.x = Math.PI / 2;
-      house.position.set(0.0, -0.1, 0.0);
-      // x(kiri kanan), y(+maju -mundur), z(+naik -turun)
-
-      house.traverse((obj) => {
-        if (obj.isMesh && obj.material) {
-          obj.material.metalness = Math.min(obj.material.metalness ?? 0, 0.6);
-          obj.material.roughness = Math.max(obj.material.roughness ?? 0.4, 0.4);
-        }
-      });
-
+      house.position.set(0.0, -0.15, 0.0);
+  
       smoothGroup.add(house);
     });
-
-    // ---- Prevent snap on brief target loss
-    anchor.onTargetLost = () => {
-      smoothPose.initialized = true;
-    };
-
+  
+    // smoothing strength
+    const positionLerp = 0.15;
+    const rotationLerp = 0.15;
+  
     startButton.addEventListener("click", async () => {
       startButton.style.display = "none";
       await mindarThree.start();
-
+  
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.setSize(window.innerWidth, window.innerHeight);
-
+  
       renderer.setAnimationLoop(() => {
-        if (anchor.visible) {
-          anchor.group.updateWorldMatrix(true, false);
-
-          const targetPos = new THREE.Vector3();
-          const targetQuat = new THREE.Quaternion();
-
-          anchor.group.getWorldPosition(targetPos);
-          anchor.group.getWorldQuaternion(targetQuat);
-
-          if (!smoothPose.initialized) {
-            smoothPose.position.copy(targetPos);
-            smoothPose.quaternion.copy(targetQuat);
-            smoothPose.initialized = true;
-          } else {
-            // 🔥 actual pose smoothing
-            smoothPose.position.lerp(targetPos, 0.08);
-            smoothPose.quaternion.slerp(targetQuat, 0.08);
-          }
-
-          smoothGroup.position.copy(smoothPose.position);
-          smoothGroup.quaternion.copy(smoothPose.quaternion);
-        }
-
+        // copy anchor transform as target
+        anchor.group.getWorldPosition(targetPosition);
+        anchor.group.getWorldQuaternion(targetQuaternion);
+  
+        // convert world target into anchor local space
+        smoothGroup.position.lerp(
+          anchor.group.position,
+          positionLerp
+        );
+  
+        smoothGroup.quaternion.slerp(
+          anchor.group.quaternion,
+          rotationLerp
+        );
+  
         renderer.render(scene, camera);
       });
     });
