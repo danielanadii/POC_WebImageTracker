@@ -123,6 +123,7 @@
     // smoothing strength
     const positionLerp = 0.10;
     const rotationLerp = 0.12;
+    const scaleLerp = 0.10;
   
     startButton.addEventListener("click", async () => {
       startButton.style.display = "none";
@@ -145,6 +146,11 @@
         smoothGroup.quaternion.slerp(
           anchor.group.quaternion,
           rotationLerp
+        );
+
+        smoothGroup.scale.lerp(
+          anchor.group.scale,
+          scaleLerp
         );
   
         renderer.render(scene, camera);
