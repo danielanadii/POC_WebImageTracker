@@ -105,9 +105,9 @@
     loader.load("./house.glb", (gltf) => {
       const house = gltf.scene;
 
-      house.scale.set(0.18, 0.27, 0.18);
+      house.scale.set(0.18, 0.22, 0.18);
       house.rotation.x = Math.PI / 2;
-      house.position.set(0.0, -0.15, 0.0);
+      house.position.set(0.0, -0.1, 0.1);
       // x(kiri kanan), y(+maju -mundur), z(+naik -turun)
 
       anchor.group.add(house);
