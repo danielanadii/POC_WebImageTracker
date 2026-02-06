@@ -83,12 +83,11 @@
 
     const { renderer, scene, camera } = mindarThree;
 
-    // ---- Color management
+    // ---- Color & lighting (unchanged)
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.35; // 🔥 brighter but still natural
+    renderer.toneMappingExposure = 1.35;
 
-    // ---- Brighter, natural lighting
     const sun = new THREE.DirectionalLight(0xffffff, 1.8);
     sun.position.set(5, 10, 5);
 
@@ -96,44 +95,77 @@
     fill.position.set(-5, 5, 2);
 
     const ambient = new THREE.AmbientLight(0xffffff, 0.9);
-
     scene.add(sun, fill, ambient);
 
+    // ---- Anchor
     const anchor = mindarThree.addAnchor(0);
 
+    // ---- Smoothing state
+    const smoothGroup = new THREE.Group();
+    scene.add(smoothGroup);
+
+    const smoothPose = {
+      position: new THREE.Vector3(),
+      quaternion: new THREE.Quaternion(),
+      initialized: false,
+    };
+
+    // ---- Load model
     const loader = new GLTFLoader();
     loader.load("./house.glb", (gltf) => {
       const house = gltf.scene;
 
       house.scale.set(0.18, 0.22, 0.18);
       house.rotation.x = Math.PI / 2;
-      house.position.set(0.0, -0.1, 0.1);
+      house.position.set(0.0, -0.1, 0.0);
       // x(kiri kanan), y(+maju -mundur), z(+naik -turun)
 
-      const smoothGroup = new THREE.Group();
+      house.traverse((obj) => {
+        if (obj.isMesh && obj.material) {
+          obj.material.metalness = Math.min(obj.material.metalness ?? 0, 0.6);
+          obj.material.roughness = Math.max(obj.material.roughness ?? 0.4, 0.4);
+        }
+      });
+
       smoothGroup.add(house);
-      anchor.group.add(smoothGroup);
-      
-      // store reference for animation loop
-      window._smoothGroup = smoothGroup;
     });
+
+    // ---- Prevent snap on brief target loss
+    anchor.onTargetLost = () => {
+      smoothPose.initialized = true;
+    };
 
     startButton.addEventListener("click", async () => {
       startButton.style.display = "none";
-
       await mindarThree.start();
 
       renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
       renderer.setSize(window.innerWidth, window.innerHeight);
 
       renderer.setAnimationLoop(() => {
-        if (window._smoothGroup) {
-          const target = anchor.group;
-      
-          window._smoothGroup.position.lerp(target.position, 0.15);
-          window._smoothGroup.quaternion.slerp(target.quaternion, 0.15);
+        if (anchor.visible) {
+          anchor.group.updateWorldMatrix(true, false);
+
+          const targetPos = new THREE.Vector3();
+          const targetQuat = new THREE.Quaternion();
+
+          anchor.group.getWorldPosition(targetPos);
+          anchor.group.getWorldQuaternion(targetQuat);
+
+          if (!smoothPose.initialized) {
+            smoothPose.position.copy(targetPos);
+            smoothPose.quaternion.copy(targetQuat);
+            smoothPose.initialized = true;
+          } else {
+            // 🔥 actual pose smoothing
+            smoothPose.position.lerp(targetPos, 0.08);
+            smoothPose.quaternion.slerp(targetQuat, 0.08);
+          }
+
+          smoothGroup.position.copy(smoothPose.position);
+          smoothGroup.quaternion.copy(smoothPose.quaternion);
         }
-      
+
         renderer.render(scene, camera);
       });
     });
