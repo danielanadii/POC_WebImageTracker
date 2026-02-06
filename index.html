@@ -110,7 +110,12 @@
       house.position.set(0.0, -0.1, 0.1);
       // x(kiri kanan), y(+maju -mundur), z(+naik -turun)
 
-      anchor.group.add(house);
+      const smoothGroup = new THREE.Group();
+      smoothGroup.add(house);
+      anchor.group.add(smoothGroup);
+      
+      // store reference for animation loop
+      window._smoothGroup = smoothGroup;
     });
 
     startButton.addEventListener("click", async () => {
@@ -122,6 +127,13 @@
       renderer.setSize(window.innerWidth, window.innerHeight);
 
       renderer.setAnimationLoop(() => {
+        if (window._smoothGroup) {
+          const target = anchor.group;
+      
+          window._smoothGroup.position.lerp(target.position, 0.15);
+          window._smoothGroup.quaternion.slerp(target.quaternion, 0.15);
+        }
+      
         renderer.render(scene, camera);
       });
     });
