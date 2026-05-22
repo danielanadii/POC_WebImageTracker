@@ -77,7 +77,8 @@
       videoSettings: {
         facingMode: "environment",
         width: { ideal: 1920 },
-        height: { ideal: 1080 }
+        height: { ideal: 1080 },
+        frameRate: { ideal: 60 }
       }
     });
   
@@ -115,7 +116,7 @@
       const house = gltf.scene;
   
       house.rotation.x = Math.PI / 2;
-      house.position.set(0.0, 0.15, 0.0);
+      house.position.set(0.0, 0.3, 0.0);
   
       smoothGroup.add(house);
     });
@@ -129,7 +130,7 @@
       await mindarThree.start();
   
       // renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2.5));
-      renderer.setPixelRatio(3);
+      renderer.setPixelRatio(window.devicePixelRatio);
       renderer.setSize(window.innerWidth, window.innerHeight);
   
       renderer.setAnimationLoop(() => {
