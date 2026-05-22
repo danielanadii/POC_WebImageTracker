@@ -115,7 +115,7 @@
       const house = gltf.scene;
   
       house.rotation.x = Math.PI / 2;
-      house.position.set(0.0, -0.15, 0.0);
+      house.position.set(0.0, 0.05, 0.0);
   
       smoothGroup.add(house);
     });
@@ -128,7 +128,7 @@
       startButton.style.display = "none";
       await mindarThree.start();
   
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2.5));
       renderer.setSize(window.innerWidth, window.innerHeight);
   
       renderer.setAnimationLoop(() => {
