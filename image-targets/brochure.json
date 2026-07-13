@@ -1,0 +1,23 @@
+{
+  "imagePath": "image-targets/brochure_luminance.png",
+  "metadata": null,
+  "name": "brochure",
+  "type": "PLANAR",
+  "properties": {
+    "left": 21,
+    "top": 0,
+    "width": 637,
+    "height": 849,
+    "isRotated": false,
+    "originalWidth": 679,
+    "originalHeight": 849
+  },
+  "resources": {
+    "originalImage": "brochure_original.png",
+    "croppedImage": "brochure_cropped.png",
+    "thumbnailImage": "brochure_thumbnail.png",
+    "luminanceImage": "brochure_luminance.png"
+  },
+  "created": 1783936366383,
+  "updated": 1783936366383
+}
