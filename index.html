@@ -1,157 +1,58 @@
-<!DOCTYPE html>
+<!doctype html>
 <html lang="en">
-<head>
-  <meta charset="utf-8" />
-  <meta
-    name="viewport"
-    content="width=device-width, initial-scale=1.0, user-scalable=no"
-  />
-  <meta name="apple-mobile-web-app-capable" content="yes" />
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#073b2b" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>Pesona Haka Tingang — AR Home</title>
 
-  <title>Image Tracking POC</title>
+    <!-- 8frame provides A-Frame with the 8th Wall bindings. -->
+    <script src="https://cdn.8thwall.com/web/aframe/8frame-1.5.0.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@8thwall/engine-binary@1/dist/xr.js" async crossorigin="anonymous" data-preload-chunks="slam"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@8thwall/landing-page@1/dist/landing-page.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@8thwall/xrextras@1/dist/xrextras.js" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <div id="ar-hud" aria-live="polite">
+      <div class="brand">PESONA HAKA TINGANG</div>
+      <div class="scan-frame" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+      <div class="instruction" id="instruction">Point your camera at the brochure</div>
+      <div class="hint" id="hint">Keep the entire house image in view</div>
+    </div>
 
-  <!-- Import map -->
-  <script type="importmap">
-  {
-    "imports": {
-      "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
-      "three/addons/": "https://unpkg.com/three@0.160.0/examples/jsm/",
-      "mindar-image-three": "https://cdn.jsdelivr.net/npm/mind-ar@1.2.5/dist/mindar-image-three.prod.js"
-    }
-  }
-  </script>
+    <a-scene
+      xrextras-gesture-detector
+      landing-page
+      xrextras-loading
+      xrextras-runtime-error
+      renderer="colorManagement: true; physicallyCorrectLights: true"
+      xrweb="disableWorldTracking: true"
+    >
+      <a-assets>
+        <a-asset-item id="house-model" src="house.glb"></a-asset-item>
+      </a-assets>
 
-  <style>
-    html, body {
-      margin: 0;
-      padding: 0;
-      width: 100%;
-      height: 100%;
-      overflow: hidden;
-      background: black;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
-    }
+      <a-camera position="0 4 10" raycaster="objects: .cantap" cursor="fuse: false; rayOrigin: mouse"></a-camera>
+      <a-light type="hemisphere" intensity="1.1" color="#ffffff" groundColor="#305c32"></a-light>
+      <a-light type="directional" intensity="1.6" position="2 5 3" cast-shadow="true"></a-light>
 
-    #ar-container {
-      position: fixed;
-      inset: 0;
-      width: 100vw;
-      height: 100vh;
-      overflow: hidden;
-      background: black;
-    }
+      <!-- The name must match image-targets/brochure.json. -->
+      <xrextras-named-image-target name="brochure" id="brochure-target">
+        <a-entity id="ar-home" class="cantap" xrextras-one-finger-rotate xrextras-pinch-scale="minScale: 0.7; maxScale: 1.45">
+          <a-entity
+            gltf-model="#house-model"
+            position="0 0 0"
+            rotation="90 0 0"
+            scale="0.52 0.52 0.58"
+            shadow="cast: true; receive: false"
+          ></a-entity>
+          <a-circle rotation="-90 0 0" radius="0.72" color="#06291e" opacity="0.28" material="transparent: true; shader: flat"></a-circle>
+        </a-entity>
+      </xrextras-named-image-target>
+    </a-scene>
 
-    #start-btn {
-      position: fixed;
-      z-index: 10;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      padding: 16px 28px;
-      font-size: 18px;
-      border-radius: 10px;
-      border: none;
-      background: #ffffff;
-      color: #000000;
-      cursor: pointer;
-    }
-  </style>
-</head>
-
-<body>
-  <button id="start-btn">Start AR</button>
-  <div id="ar-container"></div>
-
-  <script type="module">
-    import * as THREE from "three";
-    import { GLTFLoader } from "three/addons/loaders/GLTFLoader.js";
-    import { MindARThree } from "mindar-image-three";
-  
-    const startButton = document.getElementById("start-btn");
-    const container = document.getElementById("ar-container");
-  
-    const mindarThree = new MindARThree({
-      container,
-      imageTargetSrc: "./targets.mind",
-      videoSettings: {
-        facingMode: "environment",
-        width: { ideal: 1920 },
-        height: { ideal: 1080 },
-        frameRate: { ideal: 60 }
-      }
-    });
-  
-    const { renderer, scene, camera } = mindarThree;
-  
-    renderer.outputColorSpace = THREE.SRGBColorSpace;
-    renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.1;
-  
-    const sun = new THREE.DirectionalLight(0xffffff, 1.8);
-    sun.position.set(5, 10, 5);
-    sun.castShadow = false;
-    
-    const fill = new THREE.DirectionalLight(0xffffff, 0.8);
-    fill.position.set(-5, 5, 2);
-    
-    const ambient = new THREE.AmbientLight(0xffffff, 0.9);
-    
-    scene.add(sun, fill, ambient);
-  
-    const anchor = mindarThree.addAnchor(0);
-  
-    // ---- SMOOTHING SETUP (THIS IS THE KEY PART)
-    const smoothGroup = new THREE.Group();
-    anchor.group.add(smoothGroup);
-  
-    const targetPosition = new THREE.Vector3();
-    const targetQuaternion = new THREE.Quaternion();
-    const targetScale = new THREE.Vector3(0.52, 0.52, 0.58);
-  
-    smoothGroup.scale.copy(targetScale);
-  
-    const loader = new GLTFLoader();
-    loader.load("./house.glb", (gltf) => {
-      const house = gltf.scene;
-  
-      house.rotation.x = Math.PI / 2;
-      house.position.set(0.0, 0.0, 0.0);
-  
-      smoothGroup.add(house);
-    });
-  
-    // smoothing strength
-    const positionLerp = 0.09;
-    const rotationLerp = 0.12;
-  
-    startButton.addEventListener("click", async () => {
-      startButton.style.display = "none";
-      await mindarThree.start();
-  
-      // renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2.5));
-      renderer.setPixelRatio(window.devicePixelRatio);
-      renderer.setSize(window.innerWidth, window.innerHeight);
-  
-      renderer.setAnimationLoop(() => {
-        // copy anchor transform as target
-        anchor.group.getWorldPosition(targetPosition);
-        anchor.group.getWorldQuaternion(targetQuaternion);
-  
-        // convert world target into anchor local space
-        smoothGroup.position.lerp(
-          anchor.group.position,
-          positionLerp
-        );
-  
-        smoothGroup.quaternion.slerp(
-          anchor.group.quaternion,
-          rotationLerp
-        );
-  
-        renderer.render(scene, camera);
-      });
-    });
-  </script>
-</body>
+    <script type="module" src="/app.js"></script>
+  </body>
 </html>
