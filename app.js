@@ -16,7 +16,7 @@ const imageTarget = {
 }
 
 // Increase z to lift the house further above the brochure image.
-const HOUSE_LIFT = 0.2
+const HOUSE_LIFT = 0.25
 house.setAttribute('position', `0 0 ${HOUSE_LIFT}`)
 
 const hideLoadingScreen = () => loadingScreen.classList.add('is-ready')
