@@ -2,6 +2,7 @@
 html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #07110c; }
 #loading-screen { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; background: radial-gradient(circle at 50% 35%, #176b48 0%, #092d20 46%, #04120c 100%); transition: opacity .45s ease, visibility .45s ease; }
 #loading-screen.is-ready { opacity: 0; visibility: hidden; }
+.exit-ar { position: fixed; z-index: 21; top: calc(env(safe-area-inset-top) + 18px); left: 18px; display: grid; width: 44px; height: 44px; place-items: center; border: 1px solid rgba(255,255,255,.6); border-radius: 50%; color: #fff; background: rgba(4,41,29,.58); box-shadow: 0 4px 18px rgba(0,0,0,.18); font-size: 31px; font-weight: 300; line-height: 1; text-decoration: none; backdrop-filter: blur(8px); }
 .loading-content { display: grid; justify-items: center; gap: 15px; text-align: center; }
 .loading-mark { position: relative; width: 58px; height: 58px; animation: loading-turn 1.3s linear infinite; }
 .loading-mark span { position: absolute; width: 21px; height: 21px; background: #efff98; box-shadow: 0 0 18px rgba(239,255,152,.55); }
