@@ -17,7 +17,39 @@ const imageTarget = {
 
 // Increase z to lift the house further above the brochure image.
 const HOUSE_LIFT = 0.26
-house.setAttribute('position', `0 0 ${HOUSE_LIFT}`)
+const HOUSE_START_LIFT = -0.18
+const HOUSE_ENTRANCE_DURATION = 850
+let modelIsLoaded = false
+let targetIsFound = false
+let entranceHasPlayed = false
+
+const resetHousePosition = () => {
+  house.removeAttribute('animation__entrance')
+  house.setAttribute('position', `0 0 ${HOUSE_START_LIFT}`)
+}
+
+const playHouseEntrance = () => {
+  if (!modelIsLoaded || !targetIsFound || entranceHasPlayed) return
+
+  entranceHasPlayed = true
+  resetHousePosition()
+  requestAnimationFrame(() => {
+    house.setAttribute('animation__entrance', {
+      property: 'position',
+      from: `0 0 ${HOUSE_START_LIFT}`,
+      to: `0 0 ${HOUSE_LIFT}`,
+      dur: HOUSE_ENTRANCE_DURATION,
+      easing: 'easeOutBack',
+      loop: false,
+    })
+  })
+}
+
+resetHousePosition()
+house.addEventListener('model-loaded', () => {
+  modelIsLoaded = true
+  playHouseEntrance()
+})
 
 const hideLoadingScreen = () => loadingScreen.classList.add('is-ready')
 
@@ -35,7 +67,9 @@ scene.addEventListener('realityready', hideLoadingScreen, {once: true})
 
 target.addEventListener('xrextrasfound', () => {
   hideLoadingScreen()
+  targetIsFound = true
   arHome.setAttribute('visible', true)
+  playHouseEntrance()
   hud.classList.add('target-found')
   instruction.textContent = 'Your AR home is ready'
   hint.textContent = 'Pinch to resize'
@@ -43,6 +77,9 @@ target.addEventListener('xrextrasfound', () => {
 
 target.addEventListener('xrextraslost', () => {
   arHome.setAttribute('visible', false)
+  targetIsFound = false
+  entranceHasPlayed = false
+  resetHousePosition()
   hud.classList.remove('target-found')
   instruction.textContent = 'Find the brochure again'
   hint.textContent = 'Keep the entire house image in view'
