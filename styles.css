@@ -1,5 +1,17 @@
 :root { color-scheme: dark; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
 html, body { width: 100%; height: 100%; margin: 0; overflow: hidden; background: #07110c; }
+#loading-screen { position: fixed; inset: 0; z-index: 20; display: grid; place-items: center; background: radial-gradient(circle at 50% 35%, #176b48 0%, #092d20 46%, #04120c 100%); transition: opacity .45s ease, visibility .45s ease; }
+#loading-screen.is-ready { opacity: 0; visibility: hidden; }
+.loading-content { display: grid; justify-items: center; gap: 15px; text-align: center; }
+.loading-mark { position: relative; width: 58px; height: 58px; animation: loading-turn 1.3s linear infinite; }
+.loading-mark span { position: absolute; width: 21px; height: 21px; background: #efff98; box-shadow: 0 0 18px rgba(239,255,152,.55); }
+.loading-mark span:nth-child(1) { top: 0; left: 0; }
+.loading-mark span:nth-child(2) { top: 0; right: 0; background: #f3af4d; }
+.loading-mark span:nth-child(3) { bottom: 0; left: 0; background: #f3af4d; }
+.loading-mark span:nth-child(4) { right: 0; bottom: 0; }
+.loading-brand { font-size: 12px; letter-spacing: .2em; font-weight: 800; }
+.loading-label { color: rgba(255,255,255,.72); font-size: 14px; }
+@keyframes loading-turn { to { transform: rotate(90deg); } }
 #ar-hud { position: fixed; inset: 0; z-index: 3; pointer-events: none; display: grid; grid-template-rows: auto 1fr auto auto; justify-items: center; padding: calc(env(safe-area-inset-top) + 22px) 20px calc(env(safe-area-inset-bottom) + 30px); transition: opacity .25s ease; }
 .brand { border: 1px solid rgba(255,255,255,.55); border-radius: 999px; padding: 8px 13px; font-size: 11px; letter-spacing: .14em; font-weight: 800; background: rgba(4, 41, 29, .55); backdrop-filter: blur(8px); }
 .scan-frame { align-self: center; position: relative; width: min(72vw, 320px); aspect-ratio: 1 / 1.32; opacity: .94; transition: transform .35s ease, opacity .35s ease; }
