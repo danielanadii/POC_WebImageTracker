@@ -4,13 +4,13 @@
   "name": "brochure",
   "type": "PLANAR",
   "properties": {
-    "left": 21,
+    "left": 35,
     "top": 0,
-    "width": 637,
-    "height": 849,
+    "width": 1052,
+    "height": 1402,
     "isRotated": false,
-    "originalWidth": 679,
-    "originalHeight": 849
+    "originalWidth": 1122,
+    "originalHeight": 1402
   },
   "resources": {
     "originalImage": "brochure_original.png",
@@ -18,6 +18,6 @@
     "thumbnailImage": "brochure_thumbnail.png",
     "luminanceImage": "brochure_luminance.png"
   },
-  "created": 1783936366383,
-  "updated": 1783936366383
+  "created": 1784087499011,
+  "updated": 1784087499011
 }
