@@ -7,16 +7,21 @@ const instruction = document.querySelector('#instruction')
 const hint = document.querySelector('#hint')
 const target = document.querySelector('#brochure-target')
 const house = document.querySelector('#house-content')
+const imageTarget = {
+  ...brochureTarget,
+  // The AR experience lives at /ar/, while targets are deployed at the site root.
+  imagePath: new URL('../image-targets/brochure_luminance.png', window.location.href).href,
+}
 
 // Increase z to lift the house further above the brochure image.
-const HOUSE_LIFT = 0.08
+const HOUSE_LIFT = 0.12
 house.setAttribute('position', `0 0 ${HOUSE_LIFT}`)
 
 const hideLoadingScreen = () => loadingScreen.classList.add('is-ready')
 
 const configureImageTargets = () => {
   window.XR8.XrController.configure({
-    imageTargetData: [brochureTarget],
+    imageTargetData: [imageTarget],
   })
 }
 

@@ -5,6 +5,14 @@ import {defineConfig} from 'vite'
 export default defineConfig({
   base: process.env.BASE_PATH || '/',
   publicDir: 'public',
+  build: {
+    rollupOptions: {
+      input: {
+        landing: resolve('index.html'),
+        ar: resolve('ar/index.html'),
+      },
+    },
+  },
   plugins: [{
     name: 'copy-image-targets',
     async closeBundle() {
