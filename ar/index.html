@@ -29,14 +29,13 @@
     </div>
 
     <a-scene xrextras-gesture-detector renderer="colorManagement: true; physicallyCorrectLights: true" xrweb="disableWorldTracking: true">
-      <a-assets><a-asset-item id="house-model" src="../house.glb"></a-asset-item></a-assets>
       <a-camera position="0 4 10" raycaster="objects: .cantap" cursor="fuse: false; rayOrigin: mouse"></a-camera>
       <a-light type="hemisphere" intensity="1.1" color="#ffffff" groundColor="#305c32"></a-light>
       <a-light type="directional" intensity="1.6" position="2 5 3" cast-shadow="true"></a-light>
 
       <xrextras-named-image-target name="brochure" id="brochure-target">
-        <a-entity id="ar-home" xrextras-pinch-scale="minScale: 0.7; maxScale: 1.45">
-          <a-entity id="house-content" gltf-model="#house-model" position="0 0 0.08" rotation="90 0 0" scale="0.52 0.52 0.58" shadow="cast: true; receive: false"></a-entity>
+        <a-entity id="ar-home" visible="false" xrextras-pinch-scale="minScale: 0.7; maxScale: 1.45">
+          <a-entity id="house-content" gltf-model="../house.glb" position="0 0 0.08" rotation="90 0 0" scale="0.52 0.52 0.58" shadow="cast: true; receive: false"></a-entity>
           <a-circle rotation="-90 0 0" radius="0.72" color="#06291e" opacity="0.28" material="transparent: true; shader: flat"></a-circle>
         </a-entity>
       </xrextras-named-image-target>
