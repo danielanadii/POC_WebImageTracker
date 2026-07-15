@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no" />
+    <meta name="theme-color" content="#073b2b" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
+    <title>Muara's Property AR</title>
+
+    <script src="https://cdn.8thwall.com/web/aframe/8frame-1.5.0.min.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@8thwall/engine-binary@1/dist/xr.js" async crossorigin="anonymous" data-preload-chunks="slam"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@8thwall/xrextras@1/dist/xrextras.js" crossorigin="anonymous"></script>
+  </head>
+  <body>
+    <div id="loading-screen" aria-live="polite">
+      <div class="loading-content">
+        <div class="loading-mark" aria-hidden="true"><span></span><span></span><span></span><span></span></div>
+        <div class="loading-brand">MUARA'S PROPERTY AR</div>
+        <div class="loading-label">Preparing your AR home</div>
+      </div>
+    </div>
+
+    <div id="ar-hud" aria-live="polite">
+      <div class="brand">MUARA'S PROPERTY AR</div>
+      <div class="scan-frame" aria-hidden="true"><i></i><i></i><i></i><i></i></div>
+      <div class="instruction" id="instruction">Point your camera at the brochure</div>
+      <div class="hint" id="hint">Keep the entire house image in view</div>
+    </div>
+
+    <a-scene xrextras-gesture-detector renderer="colorManagement: true; physicallyCorrectLights: true" xrweb="disableWorldTracking: true">
+      <a-assets><a-asset-item id="house-model" src="../house.glb"></a-asset-item></a-assets>
+      <a-camera position="0 4 10" raycaster="objects: .cantap" cursor="fuse: false; rayOrigin: mouse"></a-camera>
+      <a-light type="hemisphere" intensity="1.1" color="#ffffff" groundColor="#305c32"></a-light>
+      <a-light type="directional" intensity="1.6" position="2 5 3" cast-shadow="true"></a-light>
+
+      <xrextras-named-image-target name="brochure" id="brochure-target">
+        <a-entity id="ar-home" xrextras-pinch-scale="minScale: 0.7; maxScale: 1.45">
+          <a-entity id="house-content" gltf-model="#house-model" position="0 0 0.08" rotation="90 0 0" scale="0.52 0.52 0.58" shadow="cast: true; receive: false"></a-entity>
+          <a-circle rotation="-90 0 0" radius="0.72" color="#06291e" opacity="0.28" material="transparent: true; shader: flat"></a-circle>
+        </a-entity>
+      </xrextras-named-image-target>
+    </a-scene>
+
+    <script type="module" src="../app.js"></script>
+  </body>
+</html>
