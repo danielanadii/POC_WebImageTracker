@@ -2,9 +2,17 @@ import brochureTarget from './image-targets/brochure.json'
 import './styles.css'
 
 const hud = document.querySelector('#ar-hud')
+const loadingScreen = document.querySelector('#loading-screen')
 const instruction = document.querySelector('#instruction')
 const hint = document.querySelector('#hint')
 const target = document.querySelector('#brochure-target')
+const house = document.querySelector('#house-content')
+
+// Increase z to lift the house further above the brochure image.
+const HOUSE_LIFT = 0.08
+house.setAttribute('position', `0 0 ${HOUSE_LIFT}`)
+
+const hideLoadingScreen = () => loadingScreen.classList.add('is-ready')
 
 const configureImageTargets = () => {
   window.XR8.XrController.configure({
@@ -15,10 +23,14 @@ const configureImageTargets = () => {
 if (window.XR8) configureImageTargets()
 else window.addEventListener('xrloaded', configureImageTargets, {once: true})
 
+if (window.XR8) hideLoadingScreen()
+else window.addEventListener('xrloaded', hideLoadingScreen, {once: true})
+
 target.addEventListener('xrextrasfound', () => {
+  hideLoadingScreen()
   hud.classList.add('target-found')
   instruction.textContent = 'Your AR home is ready'
-  hint.textContent = 'Drag to rotate · pinch to resize'
+  hint.textContent = 'Pinch to resize'
 })
 
 target.addEventListener('xrextraslost', () => {

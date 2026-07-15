@@ -1,6 +1,8 @@
 # Pesona Haka Tingang — 8th Wall Image Target AR
 
-This is a self-hosted 8th Wall XR Engine experience. Scan the supplied brochure to reveal the 3D house, then drag to rotate it or pinch to resize it.
+This is a self-hosted 8th Wall XR Engine experience. Scan the supplied brochure to reveal the 3D house, then pinch to resize it.
+
+The house only supports pinch-to-resize. To raise or lower it above the brochure, change `HOUSE_LIFT` in `app.js`: positive values lift it away from the brochure; negative values move it closer.
 
 ## Run locally
 
