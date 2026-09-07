@@ -1,0 +1,18 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#073b2b" />
+    <title>3D Model Viewer</title>
+    <style>
+      html, body { margin: 0; height: 100%; background: #07110c; overflow: hidden; }
+      #hint { position: fixed; left: 18px; bottom: 18px; z-index: 1; color: rgba(255,255,255,.72); font: 13px Inter, ui-sans-serif, system-ui, sans-serif; }
+      canvas { display: block; }
+    </style>
+  </head>
+  <body>
+    <div id="hint">Drag to orbit &middot; scroll to zoom</div>
+    <script type="module" src="./viewer.js"></script>
+  </body>
+</html>

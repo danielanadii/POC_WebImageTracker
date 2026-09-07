@@ -10,6 +10,9 @@ export default defineConfig({
       input: {
         landing: resolve('index.html'),
         ar: resolve('ar/index.html'),
+        sandbox: resolve('sandbox/index.html'),
+        sandboxAr: resolve('sandbox/ar/index.html'),
+        sandboxViewer: resolve('sandbox/viewer.html'),
       },
     },
   },
@@ -18,6 +21,9 @@ export default defineConfig({
     async closeBundle() {
       await mkdir(resolve('dist/image-targets'), {recursive: true})
       await cp(resolve('image-targets'), resolve('dist/image-targets'), {recursive: true})
+      await mkdir(resolve('dist/sandbox/image-targets'), {recursive: true})
+      await cp(resolve('sandbox/image-targets'), resolve('dist/sandbox/image-targets'), {recursive: true})
+      await cp(resolve('sandbox/space.glb'), resolve('dist/sandbox/space.glb'))
     },
   }],
 })

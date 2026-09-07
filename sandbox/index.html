@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="theme-color" content="#073b2b" />
+    <title>AR Sandbox</title>
+  </head>
+  <body>
+    <main>
+      <header class="sandbox-header">
+        <p class="eyebrow">EXPERIMENTAL</p>
+        <h1>AR Sandbox</h1>
+        <p class="intro">A playground for trying out new 3D models and image references before they go into the main AR experience.</p>
+      </header>
+
+      <section class="tests" aria-label="Available tests">
+        <a class="test-card" href="ar/">
+          <span class="test-label">Image target AR</span>
+          <h2>Space model</h2>
+          <p>Scan the reference image with your phone's camera to preview the model in AR, animation included.</p>
+          <span class="test-cta">Launch AR test <span aria-hidden="true">↗</span></span>
+        </a>
+
+        <a class="test-card" href="viewer.html">
+          <span class="test-label">3D viewer</span>
+          <h2>Space model</h2>
+          <p>Orbit and inspect the raw glTF model with animation playback — no camera or device needed.</p>
+          <span class="test-cta">Open viewer <span aria-hidden="true">↗</span></span>
+        </a>
+      </section>
+
+      <a class="back-link" href="../">← Back to Muara's Property AR</a>
+    </main>
+
+    <script type="module" src="./landing.js"></script>
+  </body>
+</html>
